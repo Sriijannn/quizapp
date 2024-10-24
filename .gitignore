@@ -13,8 +13,6 @@ yarn-error.log*
 Thumbs.db
 /build
 /dist
-/brackend/node_modules
-/frontend/node_modules
 coverage/
 *.env.local
 .env.development.local
