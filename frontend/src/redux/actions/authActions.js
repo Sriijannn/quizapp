@@ -1,24 +1,34 @@
-// src/redux/actions/authActions.js
-export const loginUser = (credentials) => {
-  return async (dispatch) => {
-    try {
-      // Simulate an API call
-      const userData = {
-        username: credentials.username,
-        token: "fake_jwt_token", // In real cases, this would come from your API
-      };
+import axios from "axios";
 
-      // Dispatch the login action
-      dispatch({
-        type: "LOGIN",
-        payload: userData,
-      });
+// Action to handle successful login
+const loginSuccess = (userData) => ({
+  type: "LOGIN_SUCCESS",
+  payload: {
+    username: userData.username,
+    token: userData.token,
+  },
+});
 
-      // Store token in localStorage (optional)
-      localStorage.setItem("token", userData.token);
-    } catch (error) {
-      console.error("Login failed:", error);
-      // You can dispatch a LOGIN_FAIL action here if needed
-    }
-  };
+const loginFailure = (error) => ({
+  type: "LOGIN_FAILURE",
+  payload: error,
+});
+
+export const loginUser = (userData) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:7009/api/auth/login",
+      userData
+    );
+    dispatch(loginSuccess(response.data));
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Login failed. Please try again.";
+    dispatch(loginFailure(errorMessage));
+  }
+};
+
+export const logoutUser = () => (dispatch) => {
+  localStorage.removeItem("token");
+  dispatch({ type: "LOGOUT" });
 };
