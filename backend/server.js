@@ -21,7 +21,7 @@ mongoose
   .catch((err) => console.log(err));
 
 // Use the authentication routes
-app.use("/api/auth", authRoutes); // Integrating the routes
+app.use("/api/auth", authRoutes);
 
 // Server Listener
 const PORT = process.env.PORT || 5000;

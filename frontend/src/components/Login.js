@@ -3,24 +3,29 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.svg"; // Assuming you're using react-router for navigation
+import logo from "../assets/logo.svg";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const navigate = useNavigate(); // Used to navigate after login
+  const error = useSelector((state) => state.auth.error);
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(loginUser({ username, password }));
-  };
 
-  // Redirect to the quiz page if already authenticated
-  if (isAuthenticated) {
-    navigate("/instructions"); // Or wherever you want to go post-login
-  }
+    await dispatch(loginUser({ username, password }));
+
+    if (isAuthenticated) {
+      setSuccessMessage("Login Successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/instructions");
+      }, 2000);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -31,6 +36,28 @@ const Login = () => {
         <p className="text-gray-400 mb-6 text-sm">
           Log into our quiz portal with the provided credentials
         </p>
+
+        {/* Success or Error Message Card */}
+        {successMessage && (
+          <div
+            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">Success! </strong>
+            <span className="block sm:inline">{successMessage}</span>
+          </div>
+        )}
+
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">Error! </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
@@ -55,7 +82,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1  mb-6 block w-full px-[20px] py-3 border border-gray-300 text-sm rounded-md"
+              className="mt-1 mb-6 block w-full px-[20px] py-3 border border-gray-300 text-sm rounded-md"
             />
           </div>
           <button
