@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const authRoutes = require("./routes/auth"); // Importing the routes
+const authRoutes = require("./routes/auth");
+const dashboardRoutes = require("./routes/dashboard");
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ mongoose
 
 // Use the authentication routes
 app.use("/api/auth", authRoutes);
+app.use("/dashboard/api", dashboardRoutes);
 
 // Server Listener
 const PORT = process.env.PORT || 5000;
