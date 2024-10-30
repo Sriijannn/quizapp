@@ -32,11 +32,11 @@ const CountdownTimer = () => {
   };
 
   return (
-    <div className="flex gap-2 items-center text-sm font-semibold text-black px-5 py-4 bg-white rounded-lg">
+    <div className="flex gap-2 items-center text-sm font-semibold text-black px-5 py-4 bg-white rounded-lg shadow-[0_4px_8px_rgba(0,0,0,0.25)]">
       <div>
         <img src={Clock} alt="clock" />
       </div>
-      <div className="hidden md:flex">Time Remaining:</div>
+      <div className="hidden lg:flex">Time Remaining:</div>
       <div>{formatTime(timeLeft)}</div>
       <div>min</div>
     </div>
