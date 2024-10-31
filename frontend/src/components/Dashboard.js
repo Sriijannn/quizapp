@@ -43,6 +43,156 @@ function Dashboard() {
       text: "Question 5 text",
       options: ["Option A", "Option B", "Option C", "Option D"],
     },
+    {
+      number: 6,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 7,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 8,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 9,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 10,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 11,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 12,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 13,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 14,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 15,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 16,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 17,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 18,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 19,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 20,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 21,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 22,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 23,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 24,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 25,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 26,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 27,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 28,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 29,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
+    {
+      number: 30,
+      status: "answered",
+      text: "Question 5 text",
+      options: ["Option A", "Option B", "Option C", "Option D"],
+    },
   ];
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -64,17 +214,17 @@ function Dashboard() {
   };
 
   return (
-    <div className="overflow-hidden w-full h-screen flex flex-col justify-start items-center bg-[#F0F3F7] relative">
+    <div className="lg:overflow-hidden w-full h-screen flex flex-col justify-start items-center bg-[#F0F3F7] relative">
       <DashboardHead />
-      <div className="flex w-full">
+      <div className="h-[100%] flex w-full">
         {/* Sidebar Overlay for mobile */}
         <div
           className={`fixed lg:relative z-20 transition-transform duration-300 ${
             showQuestionStatus ? "translate-x-0" : "-translate-x-full"
-          } h-screen bg-white lg:translate-x-0 w-[360px] px-6 py-8`}
+          } h-screen bg-white lg:translate-x-0 w-[370px] px-6 py-8 overflow-y-auto`}
         >
           {/* Close Icon */}
-          <div className="flex justify-end mb-4">
+          <div className="flex lg:hidden justify-end mb-4">
             <button onClick={toggleQuestionStatus} aria-label="Close sidebar">
               <img src={CloseIcon} alt="Close sidebar" className="w-6 h-6" />
             </button>
@@ -86,7 +236,7 @@ function Dashboard() {
         </div>
 
         {/* Main Quiz Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="h-[100%] flex-1 flex flex-col">
           <div className="w-full flex gap-4 justify-between items-start py-4 px-3">
             <div
               className="cursor-pointer flex lg:hidden flex-col gap-1"
@@ -135,7 +285,7 @@ function Dashboard() {
             </div>
 
             {/* Navigation Buttons */}
-            <div className="w-[100%] flex justify-between px-3 mb-20">
+            <div className="w-[100%] flex justify-between px-3 lg:mb-20 mb-5">
               <button
                 onClick={goToPreviousQuestion}
                 disabled={currentQuestionIndex === 0}
