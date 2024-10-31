@@ -1,8 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Logo from "../assets/logo-white.svg";
 import Logout from "../assets/logout.svg";
 
 function DashboardHead() {
+  const navigate = useNavigate(); // Initialize navigate
+
+  // Function to handle logout and redirect to login
+  const handleLogout = () => {
+    navigate("/login"); // Redirects to the login page
+  };
+
   return (
     <div className="w-[100%] flex justify-between items-center px-6 py-4 bg-[#2F84C3]">
       <div className="flex justify-center items-center">
@@ -23,8 +31,8 @@ function DashboardHead() {
             <p className="text-white text-sm">8-9</p>
           </div>
         </div>
-        <div className="flex gap-2 items-center">
-          <img src={Logout} alt="logout" className="" />
+        <div className="flex gap-2 items-center cursor-pointer" onClick={handleLogout}>
+          <img src={Logout} alt="logout" />
           <p className="text-white text-sm">Log Out</p>
         </div>
       </div>
