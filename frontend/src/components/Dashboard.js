@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardHead from "./DashboardHead";
 import StatusIndicator from "./StatusIndicator";
 import EndTestButton from "./EndTestButton";
@@ -9,6 +9,51 @@ import Next from "../assets/next.svg";
 import CloseIcon from "../assets/close.svg"; // Assuming you have a close icon
 
 function Dashboard() {
+  useEffect(() => {
+    // Request fullscreen mode when the dashboard mounts
+    const requestFullscreen = () => {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    };
+    requestFullscreen();
+
+    // Warn user or attempt refocus if they navigate away
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        alert("Please stay on the dashboard during the test.");
+        requestFullscreen();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    //disable right click
+    const handleContextMenu = (e) => e.preventDefault();
+    document.addEventListener("contextmenu", handleContextMenu);
+
+    //disable keys
+    const handleKeyDown = (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J") ||
+        (e.ctrlKey && e.key === "u")
+      ) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Clean up event listeners on component unmount
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   const [showQuestionStatus, setShowQuestionStatus] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -21,13 +66,13 @@ function Dashboard() {
     },
     {
       number: 2,
-      status: "visited",
+      status: "notAnswered",
       text: "Question 2 text",
       options: ["Option A", "Option B", "Option C", "Option D"],
     },
     {
       number: 3,
-      status: "marked",
+      status: "markedForLater",
       text: "Question 3 text",
       options: ["Option A", "Option B", "Option C", "Option D"],
     },
@@ -231,7 +276,8 @@ function Dashboard() {
           </div>
           <QuestionStatus
             questions={questions}
-            setCurrentQuestion={(index) => setCurrentQuestionIndex(index)}
+            setCurrentQuestion={(question) => setCurrentQuestionIndex(questions.indexOf(question))}
+            toggleQuestionStatus={toggleQuestionStatus}
           />
         </div>
 
@@ -248,13 +294,13 @@ function Dashboard() {
             </div>
             <div className="w-full flex items-center justify-end sm:justify-between">
               <div className="hidden sm:flex">
-                <StatusIndicator status="notAttempted" />
+              <StatusIndicator status={currentQuestion.status} />
               </div>
               <div className="flex flex-wrap gap-3 items-center justify-end">
                 <EndTestButton />
                 <CountdownTimer />
                 <div className="sm:hidden">
-                  <StatusIndicator status="notAttempted" />
+                <StatusIndicator status={currentQuestion.status} />
                 </div>
               </div>
             </div>
