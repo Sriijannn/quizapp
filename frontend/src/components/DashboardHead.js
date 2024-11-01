@@ -31,7 +31,10 @@ function DashboardHead() {
             <p className="text-white text-sm">8-9</p>
           </div>
         </div>
-        <div className="flex gap-2 items-center cursor-pointer" onClick={handleLogout}>
+        <div
+          className="flex gap-2 items-center cursor-pointer"
+          onClick={handleLogout}
+        >
           <img src={Logout} alt="logout" />
           <p className="text-white text-sm">Log Out</p>
         </div>
