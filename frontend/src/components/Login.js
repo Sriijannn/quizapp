@@ -1,5 +1,5 @@
 // src/components/Login.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
@@ -16,16 +16,17 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     await dispatch(loginUser({ username, password }));
+  };
 
+  useEffect(() => {
     if (isAuthenticated) {
       setSuccessMessage("Login Successful! Redirecting...");
       setTimeout(() => {
         navigate("/instructions");
-      }, 2000);
+      }, 1000);
     }
-  };
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -37,7 +38,6 @@ const Login = () => {
           Log into our quiz portal with the provided credentials
         </p>
 
-        {/* Success or Error Message Card */}
         {successMessage && (
           <div
             className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"

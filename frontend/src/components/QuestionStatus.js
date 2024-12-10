@@ -9,12 +9,13 @@ const QuestionStatus = ({
     answered: "bg-[#A9E0B1] text-[#1C922F]", // Green for answered
     notAnswered: "bg-[#CDDBFF] text-[#2F84C3]", // Blue for visited but not answered
     markedForLater: "bg-[#F9F4E7] text-[#BE9939]", // Yellow for marked for later
+    visited: "bg-[#F9F4E7] text-[#BE9939]",
     notVisited: "bg-white text-[#0D0D0D] shadow-[0_4px_8px_rgba(0,0,0,0.25)]", // White for not visited
   };
 
-  const section1 = questions.slice(0, 13); // First 13 questions
-  const section2 = questions.slice(13, 25); // Next 12 questions
-  const bonusSection = questions.slice(25, 30); // Last 5 questions for bonus
+  const section1 = questions.slice(0, 1); // First 13 questions
+  const section2 = questions.slice(1, 2); // Next 12 questions
+  const bonusSection = questions.slice(2, 3); // Last 5 questions for bonus
 
   const renderSection = (section, title) => (
     <div className="w-[100%] flex flex-col gap-8 mb-8">
