@@ -1,27 +1,30 @@
 const mongoose = require("mongoose");
 
-const questionSchema = new mongoose.Schema({
-  quesId: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  question: {
-    type: String,
-    required: true,
-  },
-  options: {
-    type: [String],
-    required: true,
-  },
-  correctAnswer: {
-    type: String,
-    required: true,
-  },
+const questionSetSchema = new mongoose.Schema({
   setId: {
     type: String,
     required: true,
+    unique: true,
   },
+  questions: [
+    {
+      quesId: {
+        type: Number,
+        required: true,
+        unique: true,
+      },
+      question: {
+        type: String,
+        required: true,
+      },
+      options: {
+        type: [String],
+        required: true,
+      },
+    },
+  ],
 });
 
-module.exports = mongoose.model("Question", questionSchema);
+const QuestionSet = mongoose.model("QuestionSet", questionSetSchema);
+
+module.exports = QuestionSet;

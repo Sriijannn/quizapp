@@ -4,7 +4,11 @@ import axios from "axios";
 const loginSuccess = (userData) => ({
   type: "LOGIN_SUCCESS",
   payload: {
-    username: userData.username,
+    username: userData.user.username,
+    setid: userData.user.setid,
+    schoolName: userData.user.schoolName,
+    student: userData.user.student,
+    category: userData.user.category,
     token: userData.token,
   },
 });
@@ -29,6 +33,5 @@ export const loginUser = (userData) => async (dispatch) => {
 };
 
 export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem("token");
   dispatch({ type: "LOGOUT" });
 };
