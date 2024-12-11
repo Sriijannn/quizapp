@@ -42,6 +42,10 @@ const authReducer = (state = initialState, action) => {
         user: null,
         token: null,
         error: null,
+        schoolName: null,
+        student: null,
+        category: null,
+        setid: null,
       };
 
     default:

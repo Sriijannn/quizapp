@@ -1,6 +1,8 @@
 const express = require("express");
 const QuestionSet = require("../models/questions");
 const router = express.Router();
+const verifyToken = require("../middleware/auth");
+const Answer = require("../models/answers");
 
 // Route to inject questions to the database.
 router.post("/feedques", async (req, res) => {
@@ -35,6 +37,38 @@ router.post("/fetchQuestions", async (req, res) => {
   } catch (error) {
     console.error("Error fetching questions:", error);
     res.status(500).json({ error: "Error fetching questions" });
+  }
+});
+
+router.post("/saveAnswers", verifyToken, async (req, res) => {
+  const { answers } = req.body;
+
+  if (!answers || typeof answers !== "object") {
+    return res.status(400).json({ error: "Invalid data" });
+  }
+
+  try {
+    const userId = req.user.username; // Extracted from JWT token
+
+    // Check if the user already has answers stored
+    let answerRecord = await Answer.findOne({ userId });
+
+    if (answerRecord) {
+      // Update the answers if the user already has an entry
+      answerRecord.answers = answers;
+      await answerRecord.save();
+    } else {
+      // Create a new answer record if none exists
+      answerRecord = new Answer({ userId, answers });
+      await answerRecord.save();
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Answers saved successfully", data: answerRecord });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

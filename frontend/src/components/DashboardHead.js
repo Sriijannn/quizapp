@@ -2,11 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/logo-white.svg";
 import Logout from "../assets/logout.svg";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../redux/actions/authActions";
 
 function DashboardHead() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   useEffect(() => {
@@ -16,14 +18,14 @@ function DashboardHead() {
   }, [isAuthenticated, navigate]);
 
   const handleLogout = () => {
-    navigate("/login");
+    dispatch(logoutUser());
   };
 
   const schoolName = useSelector((state) => state.auth.schoolName);
   const student = useSelector((state) => state.auth.student);
   const categoryCode = useSelector((state) => state.auth.category);
   var category = null;
-  if (categoryCode == "0") {
+  if (categoryCode === "0") {
     category = "6-7";
   } else {
     category = "8-9";

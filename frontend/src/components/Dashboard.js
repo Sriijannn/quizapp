@@ -6,41 +6,48 @@ import EndTestButton from "./EndTestButton";
 import CountdownTimer from "./CountdownTimer";
 import QuestionStatus from "./QuestionStatus";
 import Next from "../assets/next.svg";
-import CloseIcon from "../assets/close.svg"; // Assuming you have a close icon
-import { useDispatch, useSelector } from "react-redux";
+import CloseIcon from "../assets/close.svg";
+import { useSelector } from "react-redux";
 
 function Dashboard() {
   const setId = useSelector((state) => state.auth.setid);
 
   const [questions, setQuestions] = useState([]); // Store fetched questions
-  const [selectedAnswers, setSelectedAnswers] = useState([]); // Store the selected answers
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestionStatus, setShowQuestionStatus] = useState(false);
 
-  const fetchQuestions = async (setId) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:7009/dashboard/api/fetchQuestions",
-        { setId },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      setQuestions(
-        response.data.questions.map((question, index) => ({
-          number: index + 1,
-          text: question.question,
-          options: question.options,
-          status: "unanswered",
-        }))
-      );
-    } catch (error) {
-      console.error(
-        "Error fetching questions:",
-        error.response?.data || error.message
-      );
-    }
-  };
-  fetchQuestions(setId);
+  // Fetch questions only once when the component is mounted
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:7009/dashboard/api/fetchQuestions",
+          { setId },
+          { headers: { "Content-Type": "application/json" } }
+        );
+        setQuestions(
+          response.data.questions.map((question, index) => ({
+            number: index + 1,
+            text: question.question,
+            options: question.options,
+            status: "unanswered",
+          }))
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching questions:",
+          error.response?.data || error.message
+        );
+      }
+    };
 
+    if (setId) {
+      fetchQuestions();
+    }
+  }, [setId]); // Dependency array ensures this effect runs only when `setId` changes
+
+  // Fullscreen and event listeners setup
   useEffect(() => {
     const requestFullscreen = () => {
       const el = document.documentElement;
@@ -99,7 +106,7 @@ function Dashboard() {
       updatedAnswers[currentQuestionIndex] = {
         questionNumber: currentQuestion.number,
         selectedOption: option,
-      }; // Save selected answer with question number
+      };
       return updatedAnswers;
     });
 
@@ -120,19 +127,35 @@ function Dashboard() {
     }
   };
 
-  const goToPreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
+  const markQuestion = (questionNumber) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((question) =>
+        question.number === questionNumber
+          ? { ...question, status: "markedForLater" }
+          : question
+      )
+    );
   };
-  useEffect(() => {
-    console.log("Selected Answers Array: ", selectedAnswers);
-  }, [selectedAnswers]);
+
+  const clearOption = () => {
+    setSelectedAnswers((prevAnswers) => {
+      const updatedAnswers = [...prevAnswers];
+      updatedAnswers[currentQuestionIndex] = null; // Clear the answer for the current question
+      return updatedAnswers;
+    });
+
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q, i) =>
+        i === currentQuestionIndex ? { ...q, status: "unanswered" } : q
+      )
+    );
+  };
 
   return (
     <div className="lg:overflow-hidden w-full h-screen flex flex-col justify-start items-center bg-[#F0F3F7] relative">
       <DashboardHead />
       <div className="h-[100%] flex w-full">
+        {/* Sidebar for Question Status */}
         <div
           className={`fixed lg:relative z-20 transition-transform duration-300 ${
             showQuestionStatus ? "translate-x-0" : "-translate-x-full"
@@ -152,6 +175,7 @@ function Dashboard() {
           />
         </div>
 
+        {/* Main Content */}
         <div className="h-[100%] flex-1 flex flex-col">
           <div className="w-full flex gap-4 justify-between items-start py-4 px-3">
             <div
@@ -167,7 +191,7 @@ function Dashboard() {
                 <StatusIndicator status={currentQuestion?.status} />
               </div>
               <div className="flex flex-wrap gap-3 items-center justify-end">
-                <EndTestButton />
+                <EndTestButton selectedAnswers={selectedAnswers} />
                 <CountdownTimer />
                 <div className="sm:hidden">
                   <StatusIndicator status={currentQuestion?.status} />
@@ -196,11 +220,11 @@ function Dashboard() {
                             type="radio"
                             name="options"
                             value={option}
-                            onChange={() => handleOptionSelect(option)} // Handle option selection
+                            onChange={() => handleOptionSelect(option)}
                             checked={
                               selectedAnswers[currentQuestionIndex]
                                 ?.selectedOption === option
-                            } // Check if this option is selected
+                            }
                           />
                           <span>{option}</span>
                         </label>
@@ -215,22 +239,21 @@ function Dashboard() {
 
             <div className="w-[100%] flex justify-between px-3 lg:mb-20 mb-5">
               <button
-                onClick={goToPreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-                className={`flex gap-2 text-sm px-4 py-2 rounded-lg ${
-                  currentQuestionIndex === 0 ? "bg-gray-200" : "bg-gray-300"
-                }`}
+                onClick={() => markQuestion(currentQuestion?.number)}
+                className="flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
               >
                 <p>Mark For Later</p>
               </button>
               <button
+                onClick={clearOption}
+                className="flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+              >
+                Clear Option
+              </button>
+              <button
                 onClick={goToNextQuestion}
                 disabled={currentQuestionIndex === questions.length - 1}
-                className={`flex gap-2 text-sm px-4 py-2 rounded-lg ${
-                  currentQuestionIndex === questions.length - 1
-                    ? "bg-gray-200"
-                    : "bg-gray-300"
-                }`}
+                className={`flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400`}
               >
                 <img src={Next} alt="next" />
                 <p>Save And Next</p>

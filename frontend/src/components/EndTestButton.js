@@ -2,17 +2,27 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CountdownModal from "./CountdownModal";
 
-const EndTestButton = () => {
+const EndTestButton = ({ selectedAnswers }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleEndTest = () => {
-    setIsModalOpen(true); // Open the modal when "End Test" is clicked
+    setIsModalOpen(true);
+    const transformedAnswers = selectedAnswers.reduce(
+      (acc, { questionNumber, selectedOption }) => {
+        acc[questionNumber] = selectedOption;
+        return acc;
+      },
+      {}
+    );
+
+    console.log(transformedAnswers); // Open the modal when "End Test" is clicked
   };
 
   const handleConfirmEndTest = () => {
     setIsModalOpen(false); // Close the modal
-    navigate("/portal"); // Redirect to portal after confirmation
+    // Access selectedAnswers here
+    // navigate("/portal"); // Redirect to portal after confirmation
   };
 
   const handleCancelEndTest = () => {

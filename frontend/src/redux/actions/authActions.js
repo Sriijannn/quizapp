@@ -33,6 +33,5 @@ export const loginUser = (userData) => async (dispatch) => {
 };
 
 export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem("token");
   dispatch({ type: "LOGOUT" });
 };
