@@ -23,7 +23,7 @@ function Dashboard() {
     const fetchQuestions = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:7009/dashboard/api/fetchQuestions",
+          `/dashboard/api/fetchQuestions`,
           { setId },
           { headers: { "Content-Type": "application/json" } }
         );
