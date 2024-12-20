@@ -20,10 +20,7 @@ const loginFailure = (error) => ({
 
 export const loginUser = (userData) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      "http://localhost:7009/api/auth/login",
-      userData
-    );
+    const response = await axios.post(`/api/auth/login`, userData);
     dispatch(loginSuccess(response.data));
   } catch (error) {
     const errorMessage =

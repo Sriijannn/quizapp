@@ -17,15 +17,11 @@ export const submitAnswers = async (user, selectedAnswers) => {
       answers: transformedAnswers,
     };
 
-    const response = await axios.post(
-      "http://localhost:7009/dashboard/api/saveAnswers",
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`dashboard/api/saveAnswers`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     console.log("Submit Response:", response.data);
     alert("Answers submitted successfully!");
