@@ -40,18 +40,18 @@ router.post("/fetchQuestions", async (req, res) => {
   }
 });
 
-router.post("/saveAnswers", verifyToken, async (req, res) => {
-  const { answers } = req.body;
+router.post("/saveAnswers", async (req, res) => {
+  const { answers, username } = req.body;
 
   if (!answers || typeof answers !== "object") {
     return res.status(400).json({ error: "Invalid data" });
   }
 
   try {
-    const userId = req.user.username; // Extracted from JWT token
+    // Extracted from JWT token
 
     // Check if the user already has answers stored
-    let answerRecord = await Answer.findOne({ userId });
+    let answerRecord = await Answer.findOne({ username });
 
     if (answerRecord) {
       // Update the answers if the user already has an entry
@@ -59,7 +59,7 @@ router.post("/saveAnswers", verifyToken, async (req, res) => {
       await answerRecord.save();
     } else {
       // Create a new answer record if none exists
-      answerRecord = new Answer({ userId, answers });
+      answerRecord = new Answer({ username, answers });
       await answerRecord.save();
     }
 

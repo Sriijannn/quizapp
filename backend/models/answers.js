@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const AnswerSchema = new mongoose.Schema(
   {
-    userId: {
+    username: {
       type: String, // or ObjectId if it's a reference to another model
       required: true,
     },

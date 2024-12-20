@@ -1,28 +1,37 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import CountdownModal from "./CountdownModal";
 
-const EndTestButton = ({ selectedAnswers }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
+import { useSelector } from "react-redux";
+import { submitAnswers } from "../components/submitHandler";
 
-  const handleEndTest = () => {
+const EndTestButton = ({ selectedAnswers }) => {
+  const user = useSelector((state) => state.auth.user);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const transformedAnswers = selectedAnswers.reduce(
+    (acc, { questionNumber, selectedOption }) => {
+      acc[questionNumber] = selectedOption === null ? 0 : selectedOption;
+      return acc;
+    },
+    {}
+  );
+
+  const handleEndTest = async () => {
     setIsModalOpen(true);
-    const transformedAnswers = selectedAnswers.reduce(
-      (acc, { questionNumber, selectedOption }) => {
-        acc[questionNumber] = selectedOption;
-        return acc;
-      },
-      {}
-    );
+    try {
+      // Call the submitAnswers function with selected answers and setId
+      await submitAnswers(user, transformedAnswers);
+    } catch (error) {
+      console.error("Error during submission:", error);
+    }
 
     console.log(transformedAnswers); // Open the modal when "End Test" is clicked
   };
 
-  const handleConfirmEndTest = () => {
+  const handleConfirmEndTest = async () => {
     setIsModalOpen(false); // Close the modal
     // Access selectedAnswers here
-    // navigate("/portal"); // Redirect to portal after confirmation
+    // navigate("/portal");
   };
 
   const handleCancelEndTest = () => {

@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Clock from "../assets/alarm-clock.svg";
 import axios from "axios";
+import { submitAnswers } from "../components/submitHandler";
 
-const CountdownTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(null); // Initial null to indicate loading state
+const CountdownTimer = ({ selectedAnswers }) => {
+  const user = useSelector((state) => state.auth.user);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const timeLeftRef = useRef(timeLeft);
   const navigate = useNavigate();
-
-  // Fetch the username from Redux store
   const username = useSelector((state) => state.auth.user);
 
-  // Fetch remaining time when the component mounts
+  // Keep ref updated with latest timeLeft value
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
+
+  // Fetch remaining time when component mounts
   useEffect(() => {
     if (!username) return;
 
@@ -20,7 +26,7 @@ const CountdownTimer = () => {
         const response = await fetch(`/internal/api/get-time/${username}`);
         if (response.ok) {
           const data = await response.json();
-          setTimeLeft(data.timeLeft); // Initialize the timeLeft state
+          setTimeLeft(data.timeLeft);
         } else {
           console.error("Failed to fetch remaining time");
         }
@@ -32,12 +38,62 @@ const CountdownTimer = () => {
     fetchRemainingTime();
   }, [username]);
 
-  // Timer logic
+  // Update time on server every minute
   useEffect(() => {
-    if (timeLeft === null) return; // Don't start until timeLeft is initialized
+    if (!username) return;
+
+    const updateTimeOnServer = async () => {
+      const currentTimeLeft = timeLeftRef.current;
+      if (currentTimeLeft === null || currentTimeLeft <= 0) return;
+
+      try {
+        console.log(`Updating time to server: ${currentTimeLeft}`);
+        await axios.post("/internal/api/update-time", {
+          username,
+          timeLeft: currentTimeLeft,
+        });
+        console.log("Time updated on server:", currentTimeLeft);
+      } catch (error) {
+        console.error("Error updating time on server:", error);
+      }
+    };
+
+    // Initial update immediately
+    updateTimeOnServer();
+
+    // Start the interval for subsequent updates
+    const updateTimerId = setInterval(updateTimeOnServer, 10000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(updateTimerId);
+  }, [username]); // Removed timeLeft from dependencies
+
+  // Timer logic to count down every second
+  useEffect(() => {
+    if (timeLeft === null) return;
 
     if (timeLeft <= 0) {
       alert("Time's up! Submitting your quiz.");
+      const submitAnswer = async () => {
+        try {
+          await submitAnswers(user, selectedAnswers);
+        } catch (error) {
+          console.error("Error during submission:", error);
+        }
+      };
+      submitAnswer();
+      const updateTimeOnServer = async () => {
+        try {
+          await axios.post("/internal/api/update-time", {
+            username,
+            timeLeft: 0,
+          });
+        } catch (error) {
+          console.error("Error updating time on server:", error);
+        }
+      };
+      updateTimeOnServer();
+
       navigate("/portal");
       return;
     }
@@ -53,7 +109,6 @@ const CountdownTimer = () => {
     return () => clearInterval(timerId);
   }, [timeLeft, navigate]);
 
-  // Format time as MM:SS
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -63,7 +118,6 @@ const CountdownTimer = () => {
     )}`;
   };
 
-  // Handle loading state
   if (timeLeft === null) {
     return <div>Loading...</div>;
   }

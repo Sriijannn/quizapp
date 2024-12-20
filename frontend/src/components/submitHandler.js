@@ -1,16 +1,30 @@
 import axios from "axios";
 
-export const submitAnswers = async (selectedAnswers, setId) => {
+export const submitAnswers = async (user, selectedAnswers) => {
+  console.log("User:", user);
+  console.log("Selected Answers Before Transformation:", selectedAnswers);
+
+  // Transform answers object to ensure keys are strings
+  const transformedAnswers = Object.fromEntries(
+    Object.entries(selectedAnswers).map(([key, value]) => [String(key), value])
+  );
+
+  console.log("Transformed Answers:", transformedAnswers);
+
   try {
     const payload = {
-      setId,
-      answers: selectedAnswers,
+      username: user,
+      answers: transformedAnswers,
     };
 
     const response = await axios.post(
-      "http://localhost:7009/dashboard/api/submitAnswers",
+      "http://localhost:7009/dashboard/api/saveAnswers",
       payload,
-      { headers: { "Content-Type": "application/json" } }
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
     console.log("Submit Response:", response.data);
