@@ -4,14 +4,13 @@ const questionSetSchema = new mongoose.Schema({
   setId: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // This ensures each set has a unique ID
   },
   questions: [
     {
       quesId: {
         type: Number,
         required: true,
-        unique: true,
       },
       question: {
         type: String,
@@ -24,6 +23,8 @@ const questionSetSchema = new mongoose.Schema({
     },
   ],
 });
+
+questionSetSchema.index({ setId: 1, "questions.quesId": 1 }, { unique: true });
 
 const QuestionSet = mongoose.model("QuestionSet", questionSetSchema);
 
