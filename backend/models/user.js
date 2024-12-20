@@ -1,5 +1,3 @@
-// backend/models/User.js
-
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -9,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   schoolName: { type: String, required: true },
   student: { type: String, required: true },
   category: { type: String, required: true },
+  timeLeft: { type: Number, required: true, default: 2400 }, // Time in seconds, defaulting to 30 minutes
 });
 
 module.exports = mongoose.model("User", UserSchema);

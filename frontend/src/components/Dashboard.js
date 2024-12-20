@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 
 function Dashboard() {
   const setId = useSelector((state) => state.auth.setid);
+  const username = useSelector((state) => state.auth.username);
 
   const [questions, setQuestions] = useState([]); // Store fetched questions
   const [selectedAnswers, setSelectedAnswers] = useState([]);
@@ -61,7 +62,6 @@ function Dashboard() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         alert("Please stay on the dashboard during the test.");
-        requestFullscreen();
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -100,6 +100,14 @@ function Dashboard() {
     }
   }, [currentQuestionIndex, currentQuestion]);
 
+  // Load saved answers from localStorage if available
+  //update
+  useEffect(() => {
+    const storedAnswers =
+      JSON.parse(localStorage.getItem(`quizData_${username}`)) || [];
+    setSelectedAnswers(storedAnswers);
+  }, [username]);
+
   const handleOptionSelect = (option) => {
     setSelectedAnswers((prevAnswers) => {
       const updatedAnswers = [...prevAnswers];
@@ -107,6 +115,11 @@ function Dashboard() {
         questionNumber: currentQuestion.number,
         selectedOption: option,
       };
+      //update
+      localStorage.setItem(
+        `quizData_${username}`,
+        JSON.stringify(updatedAnswers)
+      );
       return updatedAnswers;
     });
 
@@ -141,6 +154,12 @@ function Dashboard() {
     setSelectedAnswers((prevAnswers) => {
       const updatedAnswers = [...prevAnswers];
       updatedAnswers[currentQuestionIndex] = null; // Clear the answer for the current question
+
+      // update
+      localStorage.setItem(
+        `quizData_${username}`,
+        JSON.stringify(updatedAnswers)
+      );
       return updatedAnswers;
     });
 

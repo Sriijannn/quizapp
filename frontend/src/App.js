@@ -1,8 +1,13 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "./components/Login";
-import Instructions from "./components/Instructions"; // The page after login
+import Instructions from "./components/Instructions";
 import Dashboard from "./components/Dashboard";
 
 function App() {
@@ -10,10 +15,10 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/instructions" element={<Instructions />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* Add other routes here, like the quiz dashboard */}
         </Routes>
       </div>
     </Router>
