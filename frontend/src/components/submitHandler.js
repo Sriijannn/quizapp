@@ -11,6 +11,18 @@ export const submitAnswers = async (user, selectedAnswers) => {
 
   console.log("Transformed Answers:", transformedAnswers);
 
+  await axios.post(
+    `/internal/api/submit-answers`,
+    {
+      username: user,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
   try {
     const payload = {
       username: user,

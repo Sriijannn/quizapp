@@ -39,4 +39,16 @@ router.get("/get-time/:username", async (req, res) => {
   }
 });
 
+router.post("/submit-answers", async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    await User.findOneAndUpdate({ username }, { submitted: 1 }, { new: true });
+
+    res.status(200).send("Answers submitted successfully.");
+  } catch (error) {
+    res.status(500).send("Error submitting answers.");
+  }
+});
+
 module.exports = router;

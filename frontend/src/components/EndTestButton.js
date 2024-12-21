@@ -1,41 +1,47 @@
 import React, { useState } from "react";
 import CountdownModal from "./CountdownModal";
-
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { submitAnswers } from "../components/submitHandler";
+import { storeTransformedAnswers } from "../redux/actions/authActions"; // Correct import
 
 const EndTestButton = ({ selectedAnswers }) => {
   const user = useSelector((state) => state.auth.user);
-
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const transformedAnswers = selectedAnswers.reduce(
-    (acc, { questionNumber, selectedOption }) => {
-      acc[questionNumber] = selectedOption === null ? 0 : selectedOption;
-      return acc;
-    },
-    {}
-  );
+
+  // Transform selected answers into the desired format
+  const transformedAnswers = Array.isArray(selectedAnswers)
+    ? selectedAnswers.reduce((acc, item) => {
+        // Ensure item exists and has the necessary properties
+        if (
+          item &&
+          item.questionNumber !== undefined &&
+          item.selectedOption !== undefined
+        ) {
+          acc[item.questionNumber] =
+            item.selectedOption === null ? 0 : item.selectedOption;
+        } else {
+          // Debugging log
+        }
+        return acc;
+      }, {})
+    : {};
 
   const handleEndTest = async () => {
     setIsModalOpen(true);
-    try {
-      // Call the submitAnswers function with selected answers and setId
-      await submitAnswers(user, transformedAnswers);
-    } catch (error) {
-      console.error("Error during submission:", error);
-    }
-
-    console.log(transformedAnswers); // Open the modal when "End Test" is clicked
+    console.log("Transformed Answers:", transformedAnswers);
+    dispatch(storeTransformedAnswers(transformedAnswers)); // Debugging log
   };
 
-  const handleConfirmEndTest = async () => {
+  const handleConfirmEndTest = () => {
     setIsModalOpen(false); // Close the modal
-    // Access selectedAnswers here
-    // navigate("/portal");
+    console.log("Test ended and answers confirmed.");
+    // Additional actions can be added here if needed
   };
 
   const handleCancelEndTest = () => {
     setIsModalOpen(false); // Close the modal without ending the test
+    console.log("Test ending cancelled.");
   };
 
   return (
@@ -51,7 +57,7 @@ const EndTestButton = ({ selectedAnswers }) => {
       {/* Countdown Modal */}
       <CountdownModal
         isOpen={isModalOpen}
-        onClose={handleCancelEndTest} // Close without ending test
+        onClose={handleCancelEndTest} // Close without ending the test
         onConfirm={handleConfirmEndTest} // Confirm end test
       />
     </div>

@@ -32,3 +32,8 @@ export const loginUser = (userData) => async (dispatch) => {
 export const logoutUser = () => (dispatch) => {
   dispatch({ type: "LOGOUT" });
 };
+
+export const storeTransformedAnswers = (transformedAnswers) => ({
+  type: "STORE_TRANSFORMED_ANSWERS",
+  payload: transformedAnswers,
+});
