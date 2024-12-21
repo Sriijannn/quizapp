@@ -8,33 +8,60 @@ const router = express.Router();
 
 // Register User protected using admin_key
 router.post("/register", async (req, res) => {
-  const { username, password, adminkey, setid, schoolName, student, category } =
-    req.body;
+  const { adminkey, users } = req.body;
+
   if (!adminkey) {
     return res
       .status(403)
       .json({ message: "Access denied: Admin key is required" });
   }
+
   if (adminkey !== process.env.ADMIN) {
     return res.status(403).json({ message: "Access denied" });
   }
+
+  if (!Array.isArray(users) || users.length === 0) {
+    return res.status(400).json({ message: "Users array is required" });
+  }
+
+  const results = [];
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      username,
-      password: hashedPassword,
-      setid,
-      schoolName,
-      student,
-      category,
-    });
-    await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
+    for (const user of users) {
+      const { username, password, setid, schoolName, student, category } = user;
+
+      if (!username || !password) {
+        results.push({ username, status: "failed", reason: "Missing fields" });
+        continue;
+      }
+
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        results.push({
+          username,
+          status: "failed",
+          reason: "User already exists",
+        });
+        continue;
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        setid,
+        schoolName,
+        student,
+        category,
+      });
+
+      await newUser.save();
+      results.push({ username, status: "success" });
+    }
+
+    res.status(201).json({ message: "Batch processing complete", results });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
