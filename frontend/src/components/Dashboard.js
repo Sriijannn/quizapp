@@ -266,20 +266,20 @@ function Dashboard() {
             <div className="w-[100%] flex justify-between px-3 lg:mb-20 mb-5">
               <button
                 onClick={() => markQuestion(currentQuestion?.number)}
-                className="flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+                className="flex gap-2 text-xs md:text-sm px-2 md:px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
               >
                 <p>Mark For Later</p>
               </button>
               <button
                 onClick={clearOption}
-                className="flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+                className="flex gap-2 text-xs md:text-sm px-2 md:px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
               >
                 Clear Option
               </button>
               <button
                 onClick={goToNextQuestion}
                 disabled={currentQuestionIndex === questions.length - 1}
-                className={`flex gap-2 text-sm px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400`}
+                className={`flex items-center justify-center gap-2 text-xs md:text-sm px-2 md:px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400`}
               >
                 <img src={Next} alt="next" />
                 <p>Save And Next</p>
