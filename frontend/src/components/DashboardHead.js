@@ -25,7 +25,7 @@ function DashboardHead() {
   const student = useSelector((state) => state.auth.student);
   const categoryCode = useSelector((state) => state.auth.category);
   var category = null;
-  if (categoryCode === "0") {
+  if (categoryCode === "1") {
     category = "6-7";
   } else {
     category = "8-9";
