@@ -9,6 +9,7 @@ const initialState = {
   student: null,
   category: null,
   setid: null,
+  transformedAnswers: {},
 };
 
 const authReducer = (state = initialState, action) => {
@@ -47,6 +48,8 @@ const authReducer = (state = initialState, action) => {
         category: null,
         setid: null,
       };
+    case "STORE_TRANSFORMED_ANSWERS":
+      return { ...state, transformedAnswers: action.payload }; // Handle transformedAnswers
 
     default:
       return state;

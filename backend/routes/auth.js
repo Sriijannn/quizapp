@@ -46,6 +46,8 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
     if (user.timeLeft == 0)
       return res.status(400).json({ message: "Time Limit Expired" });
+    if (user.submitted == 1)
+      return res.status(400).json({ message: "Already Submitted" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)

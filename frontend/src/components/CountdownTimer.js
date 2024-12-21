@@ -3,14 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Clock from "../assets/alarm-clock.svg";
 import axios from "axios";
-import { submitAnswers } from "../components/submitHandler";
+import { logoutUser } from "../redux/actions/authActions";
+import { useDispatch } from "react-redux";
+import { submitAnswers } from "./submitHandler";
 
-const CountdownTimer = ({ selectedAnswers }) => {
-  const user = useSelector((state) => state.auth.user);
+const CountdownTimer = () => {
   const [timeLeft, setTimeLeft] = useState(null);
   const timeLeftRef = useRef(timeLeft);
-  const navigate = useNavigate();
   const username = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const transformedAnswers = useSelector(
+    (state) => state.auth.transformedAnswers
+  );
 
   // Keep ref updated with latest timeLeft value
   useEffect(() => {
@@ -28,11 +34,8 @@ const CountdownTimer = ({ selectedAnswers }) => {
           const data = await response.json();
           setTimeLeft(data.timeLeft);
         } else {
-          console.error("Failed to fetch remaining time");
         }
-      } catch (error) {
-        console.error("Error fetching remaining time:", error);
-      }
+      } catch (error) {}
     };
 
     fetchRemainingTime();
@@ -47,15 +50,11 @@ const CountdownTimer = ({ selectedAnswers }) => {
       if (currentTimeLeft === null || currentTimeLeft <= 0) return;
 
       try {
-        console.log(`Updating time to server: ${currentTimeLeft}`);
         await axios.post("/internal/api/update-time", {
           username,
           timeLeft: currentTimeLeft,
         });
-        console.log("Time updated on server:", currentTimeLeft);
-      } catch (error) {
-        console.error("Error updating time on server:", error);
-      }
+      } catch (error) {}
     };
 
     // Initial update immediately
@@ -74,27 +73,26 @@ const CountdownTimer = ({ selectedAnswers }) => {
 
     if (timeLeft <= 0) {
       alert("Time's up! Submitting your quiz.");
-      const submitAnswer = async () => {
+      const confirmEnd = async () => {
         try {
-          await submitAnswers(user, selectedAnswers);
+          await submitAnswers(user, transformedAnswers); // Start countdown after submission
         } catch (error) {
           console.error("Error during submission:", error);
         }
       };
-      submitAnswer();
+      confirmEnd();
+
       const updateTimeOnServer = async () => {
         try {
           await axios.post("/internal/api/update-time", {
             username,
             timeLeft: 0,
           });
-        } catch (error) {
-          console.error("Error updating time on server:", error);
-        }
+        } catch (error) {}
       };
       updateTimeOnServer();
 
-      navigate("/portal");
+      dispatch(logoutUser());
       return;
     }
 

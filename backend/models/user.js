@@ -7,7 +7,8 @@ const UserSchema = new mongoose.Schema({
   schoolName: { type: String, required: true },
   student: { type: String, required: true },
   category: { type: String, required: true },
-  timeLeft: { type: Number, required: true, default: 2400 }, // Time in seconds, defaulting to 30 minutes
+  timeLeft: { type: Number, required: true, default: 2400 },
+  submitted: { type: Number, required: true, default: 0 },
 });
 
 module.exports = mongoose.model("User", UserSchema);

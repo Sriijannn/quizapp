@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 
 function Dashboard() {
   const setId = useSelector((state) => state.auth.setid);
-  const username = useSelector((state) => state.auth.username);
+  const username = useSelector((state) => state.auth.user);
 
   const [questions, setQuestions] = useState([]); // Store fetched questions
   const [selectedAnswers, setSelectedAnswers] = useState([]);
@@ -131,7 +131,14 @@ function Dashboard() {
   };
 
   const toggleQuestionStatus = () => {
-    setShowQuestionStatus(!showQuestionStatus);
+    setShowQuestionStatus((prevStatus) => {
+      const newStatus = !prevStatus;
+      localStorage.setItem(
+        `questionStatuses_${username}`,
+        JSON.stringify(newStatus) // Store the new state
+      );
+      return newStatus;
+    });
   };
 
   const goToNextQuestion = () => {
